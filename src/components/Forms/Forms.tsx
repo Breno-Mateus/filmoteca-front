@@ -1,18 +1,27 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { movieSchema, type MovieFormData } from "../../schemas/MovieSchema";
+import useCreateMovie from "../../hooks/useCreateMovie";
 
 function Forms() {
-    const { register, handleSubmit, formState: { errors } } = useForm<MovieFormData>({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<MovieFormData>({
         resolver: zodResolver(movieSchema)
     });
-  
-    const handleSave = (data: any) => console.log(data);
+
+    const { handleMovieCreation, isPending } = useCreateMovie();
+
+    const onSubmit = (data: MovieFormData) => {
+        handleMovieCreation(data, {
+            onSuccess: () => {
+                reset();
+            }
+        });
+    }
 
     return (
     <form
         className="flex flex-col gap-6 pb-6"
-        onSubmit={handleSubmit(handleSave)}
+        onSubmit={handleSubmit(onSubmit)}
     >
         <div className="flex gap-4 justify-between">
 
@@ -22,10 +31,10 @@ function Forms() {
                     type="text" 
                     id="title"
                     placeholder="Ex.: Matrix" 
-                    {...register("title", { required: true })}
+                    {...register("titulo")}
                     className="border border-smooth rounded-sm p-2.5" 
                 />
-                {errors.title && <span>Este campo é obrigatório</span>}
+                {errors.titulo && <span className="text-xs text-red-500">{errors.titulo.message}</span>}
             </div>
 
             <div className="flex flex-col w-full">
@@ -33,10 +42,10 @@ function Forms() {
                 <input 
                     id="director"
                     placeholder="Ex.: Wachowski" 
-                    {...register("director", { required: true })}
+                    {...register("diretor")}
                     className="border border-smooth rounded-sm p-2.5"  
                 />
-                {errors.director && <span>Este campo é obrigatório</span>}
+                {errors.diretor && <span className="text-xs text-red-500">{errors.diretor.message}</span>}
             </div>
 
             <div className="flex flex-col w-full">
@@ -48,19 +57,20 @@ function Forms() {
                     min="0"
                     max="10" 
                     id="nota" 
-                    {...register("nota", { required: true, valueAsNumber: true })}
+                    {...register("nota", { valueAsNumber: true })}
                     className="border border-smooth rounded-sm p-2.5" 
                 />
-                {errors.nota && <span>Este campo é obrigatório</span>}
+                {errors.nota && <span className="text-xs text-red-500">{errors.nota.message}</span>}
             </div>
 
         </div>
         
         <button 
             type="submit"
-            className="bg-green-600 p-2 rounded-sm text-white hover:opacity-95 transition-opacity hover:cursor-pointer"
+            disabled={isPending}
+            className="bg-green-600 p-2 rounded-sm text-white hover:opacity-95 transition-opacity hover:cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-            Salvar
+            {isPending ? "Salvando..." : "Salvar"}
         </button>
     </form>
   )
