@@ -10,13 +10,13 @@ function SectionMovies() {
                 <h2 className="text-2xl font-bold py-4 text-gray-800">Meus filmes</h2>
                 
                 {isLoading && (
-                    <div className="text-center py-10 text-gray-500">
+                    <div className="text-center py-10 text-gray-500 animate-pulse">
                         Carregando filmes...
                     </div>
                 )}
 
                 {isError && (
-                    <div className="text-center py-10 text-red-500">
+                    <div className="text-center py-10 text-red-500 bg-red-50 rounded-lg">
                         Erro ao carregar lista. Verifique sua conexão.
                     </div>
                 )}
@@ -27,7 +27,7 @@ function SectionMovies() {
                     </div>
                 )}
                 
-                <div className="grid grid-cols-2 gap-6 pb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-10">
                     {movies.map((filme) => (
                         <CardMovies 
                             key={filme.id}
